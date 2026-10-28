@@ -176,5 +176,13 @@
     selector.addEventListener("change", showDivision);
     showDivision();
   </script>
+   <script type="module">
+    import { db, auth } from "./firebase-config.js";
+
+    console.log("Firebase test:", {
+      databaseLoaded: !!db,
+      authenticationLoaded: !!auth
+    });
+  </script>
 </body>
 </html>
