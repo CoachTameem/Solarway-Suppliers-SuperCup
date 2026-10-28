@@ -77,8 +77,11 @@
 
   <footer>Solarway Suppliers SuperCup · Official tournament page</footer>
 
-  <script>
-    const divisions = {
+  <script type="module">
+    import { db, auth } from "./firebase-config.js";
+    console.log("Firebase configuration loaded successfully.");
+
+    const divisions = 
       "U06": {
         name: "Under 06",
         groups: {
