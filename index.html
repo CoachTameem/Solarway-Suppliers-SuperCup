@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10251b">
+  <title>Solarway Suppliers SuperCup</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Arial, sans-serif;
+      background: #f3f6f3; color: #17251c;
+    }
+    header {
+      background: #10251b; color: white;
+      text-align: center; padding: 28px 16px;
+    }
+    header h1 { margin: 0 0 8px; font-size: 25px; }
+    header p { margin: 0; color: #d5e7d9; }
+    main { max-width: 900px; margin: auto; padding: 18px; }
+    .panel {
+      background: white; border-radius: 14px; padding: 18px;
+      margin-bottom: 16px; box-shadow: 0 2px 8px #0000000d;
+    }
+    label { display: block; font-weight: bold; margin-bottom: 9px; }
+    select {
+      width: 100%; padding: 13px; border-radius: 8px;
+      border: 1px solid #b8c7bb; background: white; font-size: 16px;
+    }
+    h2 { margin-top: 0; }
+    .groups { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 12px; }
+    .group {
+      border: 1px solid #dce5de; border-radius: 10px;
+      padding: 14px; background: #fbfdfb;
+    }
+    .group h3 { margin: 0 0 10px; color: #17643b; }
+    .group ul { padding-left: 20px; margin-bottom: 0; line-height: 1.8; }
+    .note { color: #536257; line-height: 1.5; font-size: 14px; }
+    footer { text-align: center; padding: 22px; color: #647168; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🏆 Solarway Suppliers SuperCup</h1>
+    <p>Tournament information, teams and match updates</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <label for="division">Choose an age division</label>
+      <select id="division"></select>
+      <p class="note">Select a division to view its teams and groups.</p>
+    </section>
+
+    <section class="panel">
+      <h2 id="divisionTitle">Teams and Groups</h2>
+      <div id="groups" class="groups"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Fixtures and Results</h2>
+      <p class="note">
+        Match schedules and live scores will appear here once the
+        fixture lists and Firebase connection are added.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Group Standings</h2>
+      <p class="note">
+        Standings will update from match scores: 3 points for a win,
+        1 for a draw and 0 for a loss.
+      </p>
+    </section>
+  </main>
+
+  <footer>Solarway Suppliers SuperCup · Official tournament page</footer>
+
+  <script>
+    const divisions = {
+      "U06": {
+        name: "Under 06",
+        groups: {
+          "Teams": ["EPS", "Knights", "PMSC", "PRES 11"]
+        }
+      },
+      "U07": {
+        name: "Under 07",
+        groups: {
+          "Group A": ["EPS", "Knights", "CAPS A", "Kiddies Hope", "PMSC"],
+          "Group B": ["UJ", "SCBI", "LA Masia Elite", "CAPS B", "JT Football"]
+        }
+      },
+      "U08": {
+        name: "Under 08",
+        groups: {
+          "Group A": ["EPS A", "Knights", "JT Football", "Grayston Lions"],
+          "Group B": ["EPS B", "K2 Football", "PMSC", "Newclare United"]
+        }
+      },
+      "U09": {
+        name: "Under 09",
+        groups: {
+          "Group 1": ["EPS A", "Buccleuch", "SCBI", "Real SD", "PMSC"],
+          "Group 2": ["LA Masia", "UJ", "Grayston Lions", "PRES 11", "EPS B"]
+        }
+      },
+      "U10": {
+        name: "Under 10",
+        groups: {
+          "Group A": ["EPS", "Knights", "UJ", "PMSC"],
+          "Group B": ["Rea SD", "LA Masia Elite", "Transition", "JT Football"]
+        }
+      },
+      "U11": {
+        name: "Under 11",
+        groups: {
+          "Group A": ["PRES 11", "Berea Albion", "LA Masia Elite", "Westrand", "Newclare United", "Grayston Lions", "Happy Fighters"],
+          "Group B": ["UJ", "Knights", "SCBI", "PMSC", "Buccleuch", "CAPS"]
+        }
+      },
+      "U12": {
+        name: "Under 12",
+        groups: {
+          "Group A": ["EPS A", "LA Masia A", "CAPS", "Transition", "Westrand"],
+          "Group B": ["EPS B", "LA Masia B", "PMSC", "UJ", "Newclare United", "Generation FC"]
+        }
+      },
+      "U13": {
+        name: "Under 13",
+        groups: {
+          "Group A": ["EPS", "Knights", "CAPS", "PMSC", "Buccleuch", "Dreamers Academy"],
+          "Group B": ["LA Masia Elite A", "Happy Fighters A", "SCBI", "Newclare United", "Touch 1 Soul FC", "Berea Albion"],
+          "Group C": ["LA Masia Elite B", "Happy Fighters B", "Westrand", "Kiddies Hope", "Killarney Santos", "Lion Heart FC"]
+        }
+      }
+    };
+
+    const selector = document.getElementById("division");
+    const groupsElement = document.getElementById("groups");
+    const titleElement = document.getElementById("divisionTitle");
+
+    Object.keys(divisions).forEach(key => {
+      const option = document.createElement("option");
+      option.value = key;
+      option.textContent = divisions[key].name;
+      selector.appendChild(option);
+    });
+
+    function showDivision() {
+      const division = divisions[selector.value];
+      titleElement.textContent = division.name + " — Teams and Groups";
+      groupsElement.replaceChildren();
+
+      Object.entries(division.groups).forEach(([groupName, teams]) => {
+        const card = document.createElement("div");
+        card.className = "group";
+
+        const heading = document.createElement("h3");
+        heading.textContent = groupName;
+        card.appendChild(heading);
+
+        const list = document.createElement("ul");
+        teams.forEach(team => {
+          const item = document.createElement("li");
+          item.textContent = team;
+          list.appendChild(item);
+        });
+
+        card.appendChild(list);
+        groupsElement.appendChild(card);
+      });
+    }
+
+    selector.addEventListener("change", showDivision);
+    showDivision();
+  </script>
+</body>
+</html>
