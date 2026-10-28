@@ -177,12 +177,28 @@
     showDivision();
   </script>
    <script type="module">
-    import { db, auth } from "./firebase-config.js";
+  import { db, auth } from "./firebase-config.js";
+  import {
+    collection,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
-    console.log("Firebase test:", {
-      databaseLoaded: !!db,
-      authenticationLoaded: !!auth
+  console.log("Firebase test:", {
+    databaseLoaded: !!db,
+    authenticationLoaded: !!auth
+  });
+
+  try {
+    const snapshot = await getDocs(collection(db, "divisions"));
+
+    console.log("Divisions loaded from Firestore:");
+
+    snapshot.forEach((doc) => {
+      console.log(doc.id, doc.data());
     });
-  </script>
+  } catch (error) {
+    console.error("Could not load divisions:", error);
+  }
+</script>
 </body>
 </html>
