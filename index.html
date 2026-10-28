@@ -192,10 +192,11 @@
     const snapshot = await getDocs(collection(db, "divisions"));
 
     console.log("Divisions loaded from Firestore:");
+console.log("Number of divisions:", snapshot.size);
 
-    snapshot.forEach((doc) => {
-      console.log(doc.id, doc.data());
-    });
+snapshot.forEach((doc) => {
+  console.log(doc.id, doc.data());
+});
   } catch (error) {
     console.error("Could not load divisions:", error);
   }
